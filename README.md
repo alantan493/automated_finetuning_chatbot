@@ -1,7 +1,7 @@
 ## Singapore Drug and Vape Laws Chatbot
 
 
-his project is a chatbot fine-tuned to provide information on Singapore's drug and vaping laws. The bot integrates dynamically updated data through web scraping and customized responses via OpenAI's fine-tuning.
+This project is a chatbot fine-tuned to provide information on Singapore's drug and vaping laws. The bot integrates dynamically updated data through web scraping and customized responses via OpenAI's fine-tuning.
 
 Project Overview
 The chatbot uses a dataset on Singapore's drug and vape laws, formatted into JSONL and fine-tuned with OpenAI’s API. It is kept current by dynamically scraping credible sources for updates.
