@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatbot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* General Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 300;
+            font-size: 100%;
+            background: #F1F1F1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        *, html {
+            --primaryGradient: linear-gradient(93.12deg, #581B98 0.52%, #9C1DE7 100%);
+            --secondaryGradient: linear-gradient(268.91deg, #581B98 -2.14%, #9C1DE7 99.69%);
+            --primaryBoxShadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+            --secondaryBoxShadow: 0px -10px 15px rgba(0, 0, 0, 0.1);
+            --primary: #581B98;
+        }
+
+        /* Back Button Styling */
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
+        .back-button img {
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+        }
+
+        /* Chatbox Container */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 90%;
+            height: 90%;
+            max-width: 700px;
+            max-height: 700px;
+            box-shadow: var(--primaryBoxShadow);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        /* Chatbox */
+        .chatbox {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Chatbox Support Content Open by default */
+        .chatbox__support {
+            display: flex;
+            flex-direction: column;
+            background: #eee;
+            width: 100%;
+            height: 100%;
+            opacity: 1;
+            transition: all .5s ease-in-out;
+        }
+
+        /* Chatbox Header */
+        .chatbox__header {
+            position: sticky;
+            top: 0;
+            background: var(--primaryGradient);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 20px;
+            box-shadow: var(--primaryBoxShadow);
+        }
+
+        .chatbox__image--header {
+            margin-right: 10px;
+        }
+
+        .chatbox__heading--header {
+            font-size: 1rem;
+            color: white;
+        }
+
+        .chatbox__description--header {
+            font-size: 0.85rem;
+            color: white;
+        }
+
+        /* Chatbox Messages */
+        .chatbox__messages {
+            display: flex;
+            flex-direction: column-reverse;
+            overflow-y: auto;
+            padding: 0 20px;
+            flex-grow: 1;
+            scroll-behavior: smooth;
+            background-color: #fff;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .messages__item {
+            margin-top: 10px;
+            background: #E0E0E0;
+            padding: 10px 15px;
+            max-width: 100%;
+            word-wrap: break-word;
+            white-space: normal;
+            font-size: 0.9rem;
+            line-height: 1.2rem;
+        }
+
+        .messages__item a {
+            color: #0066cc;
+            text-decoration: underline;
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+        .messages__item a:hover {
+            color: #004499;
+            text-decoration: none;
+        }
+
+        .messages__item--visitor,
+        .messages__item--typing {
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        .messages__item--operator {
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            border-bottom-left-radius: 20px;
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Chatbox Footer */
+        .chatbox__footer {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 20px;
+            background: var(--secondaryGradient);
+            box-shadow: var(--secondaryBoxShadow);
+            border-bottom-right-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
+
+        .chatbox__footer input {
+            width: 80%;
+            border: none;
+            padding: 10px 10px;
+            border-radius: 30px;
+            text-align: left;
+        }
+
+        /* Style for Send Button */
+        .send__button {
+            padding: 10px;
+            background-color: #581B98; /* Use the primary purple color */
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .send__button:hover {
+            background-color: #9C1DE7; /* Slightly lighter purple for hover effect */
+        }
+
+        .send__button:disabled {
+            background-color: #A0A0A0; /* Grey color when disabled */
+            cursor: not-allowed;
+        }
+
+        /* Responsive Styles */
+        /* Desktop */
+        @media only screen and (min-width: 992px) {
+            .container {
+                width: 70%;
+                height: 80%;
+            }
+
+            .chatbox__heading--header {
+                font-size: 1.2rem;
+            }
+
+            .chatbox__description--header {
+                font-size: 1rem;
+            }
+        }
+
+        /* Tablet */
+        @media only screen and (min-width: 768px) and (max-width: 991px) {
+            .container {
+                width: 85%;
+                height: 85%;
+            }
+
+            .chatbox__heading--header {
+                font-size: 1rem;
+            }
+
+            .chatbox__description--header {
+                font-size: 0.9rem;
+            }
+
+            .messages__item {
+                font-size: 0.85rem;
+            }
+
+            .send__button {
+                padding: 8px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Mobile */
+        @media only screen and (max-width: 767px) {
+            body, html {
+                height: 100%;
+                margin: 0;
+            }
+
+            .container {
+                width: 90vw;
+                height: 70vh; /* Set to 80% of the viewport height */
+                border-radius: 10px;
+                max-width: none;
+                max-height: none;
+            }
+
+            .chatbox__header {
+                padding: 10px;
+            }
+
+            .chatbox__heading--header {
+                font-size: 1rem;
+            }
+
+            .chatbox__description--header {
+                font-size: 0.85rem;
+            }
+
+            .chatbox__footer {
+                padding: 15px;
+            }
+
+            .messages__item {
+                font-size: 0.85rem;
+            }
+
+            .send__button {
+                padding: 8px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Back button positioned at the top left -->
+<button id="backButton" class="back-button">
+    <img src="{{ url_for('static', filename='images/backbutton.png') }}" alt="Back Button">
+</button>
+
+<div class="container">
+    <div class="chatbox">
+        <!-- Chatbox active by default -->
+        <div class="chatbox__support chatbox--active">
+            <div class="chatbox__header">
+                <div class="chatbox__image--header">
+                    <img src="https://img.icons8.com/?size=60&id=9Otd0Js4uSYi&format=png" alt="Chat Icon">
+                </div>
+                <div class="chatbox__content--header">
+                    <h4 class="chatbox__heading--header">Chat Support</h4>
+                    <p class="chatbox__description--header">Hello! I’m here to assist you with any queries and provide guidance on the risks associated with drug use and vaping in Singapore. How can I help you today?</p>
+                </div>
+            </div>
+            <div class="chatbox__messages">
+                <div></div>
+            </div>
+            <div class="chatbox__footer">
+                <input type="text" placeholder="Write a message...">
+                <button class="chatbox__send--footer send__button">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Back button functionality to navigate to a specific URL
+    document.getElementById('backButton').addEventListener('click', () => {
+        window.location.href = 'https://dip-e006.vercel.app/homepagev2/hmtl.html';
+    });
+</script>
+<script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
+
+</body>
+</html>
