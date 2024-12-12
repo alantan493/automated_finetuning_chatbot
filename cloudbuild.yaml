@@ -1,0 +1,29 @@
+steps:
+  # Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build', '-t', 'gcr.io/$PROJECT_ID/chatbot-backend', '.'
+    ]
+
+  # Push the Docker image to Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push', 'gcr.io/$PROJECT_ID/chatbot-backend'
+    ]
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+    - '-c'
+    - |
+      echo "Deploying to Cloud Run with image gcr.io/$PROJECT_ID/chatbot-backend"
+      
+      gcloud run deploy chatbot-backend \
+      --image "gcr.io/$PROJECT_ID/chatbot-backend" \
+      --platform managed \
+      --region asia-southeast1 \
+      --allow-unauthenticated
+
+# Set a timeout to allow for longer build times
+timeout: "900s"

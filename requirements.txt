@@ -1,0 +1,11 @@
+openai
+python-dotenv
+scrapegraphai
+flask
+flask-cors
+schedule
+gunicorn
+werkzeug
+playwright  # Added for browser automation
+requests
+httpx
